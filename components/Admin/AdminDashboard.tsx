@@ -224,12 +224,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ profiles, config, setCo
                   </button>
                </form>
                <div className="w-px h-8 bg-slate-100 mx-1 hidden md:block"></div>
-               <button 
-                 onClick={() => setShowImportLocation(true)}
-                 className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg font-bold hover:bg-slate-50 transition-all text-[10px] uppercase tracking-widest shadow-sm"
-               >
-                 <Map size={14} /> Data Địa chính
-               </button>
+
                <button 
                  onClick={() => setShowImportStudent(true)}
                  className="flex items-center gap-2 px-4 py-2 bg-due-blue text-white rounded-lg font-bold hover:bg-due-dark transition-all text-[10px] uppercase tracking-widest shadow-sm shadow-due-blue/20"
