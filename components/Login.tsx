@@ -25,7 +25,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       {/* Background Image */}
       <div 
         className="absolute inset-0 z-0 pointer-events-none bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'url(/bg-due.jpg)' }}
+        style={{ backgroundImage: `url(${import.meta.env.BASE_URL}bg-due.jpg)` }}
       >
         {/* Overlay for better readability */}
         <div className="absolute inset-0 bg-slate-900/30 backdrop-blur-sm"></div>
