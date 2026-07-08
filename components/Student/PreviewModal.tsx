@@ -175,17 +175,6 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ data, onClose, config }) =>
                 {isGeneratingDoc ? <Loader2 size={16} className="animate-spin" /> : <FileText size={16} />}
                 {isGeneratingDoc ? 'Đang tạo...' : 'Xuất Word'}
             </button>
-            <button 
-                onClick={handleDownloadPDF} 
-                disabled={isDownloading}
-                className="bg-due-orange text-white hover:bg-orange-600 px-4 py-2 rounded font-bold text-xs uppercase flex gap-2 items-center disabled:opacity-50 transition-colors shadow-sm"
-            >
-                {isDownloading ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
-                {isDownloading ? 'Đang tạo...' : 'Tải PDF'}
-            </button>
-            <button onClick={handlePrint} className="bg-due-blue text-white hover:bg-due-dark px-4 py-2 rounded font-bold text-xs uppercase flex gap-2 items-center transition-colors shadow-sm">
-                <Printer size={16} /> In phiếu
-            </button>
         </div>
       </div>
 
