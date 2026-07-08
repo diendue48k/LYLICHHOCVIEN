@@ -1,0 +1,8 @@
+{
+  "name": "DUE Postgraduate Profile Management",
+  "description": "Hệ thống quản lý lý lịch học viên cao học và nghiên cứu sinh Trường Đại học Kinh tế - ĐHĐN (DUE). Cho phép khai báo hồ sơ trực tuyến, quản lý đợt nhập liệu và xuất phiếu thông tin theo mẫu chuẩn.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": []
+}
