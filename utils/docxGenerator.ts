@@ -16,8 +16,8 @@ export const generateStudentDocx = async (data: StudentProfile, config: SystemCo
     
     // Fetch the customized template file from public directory
     const templateUrl = isNCS 
-        ? `${import.meta.env.BASE_URL}4. Phiếu thông tin Lý lịch NCS.docx` 
-        : `${import.meta.env.BASE_URL}1. Phiếu Lý lịch học viên.docx`;
+        ? `${import.meta.env.BASE_URL}4_Template_Mailing_NCS.docx` 
+        : `${import.meta.env.BASE_URL}1_Template_Mailing.docx`;
     const response = await fetch(templateUrl);
     if (!response.ok) {
         throw new Error(`Không thể tải file mẫu từ ${templateUrl}`);
