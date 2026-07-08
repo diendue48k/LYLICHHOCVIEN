@@ -16,7 +16,6 @@ def convert_user_file(doc_path, output_path):
         "☑ Nam": "{gender_nam} Nam",
         "Nữ": "{gender_nu} Nữ",
         "Việt Nam": "{nationality}",
-        "Kinh": "{ethnic}",
         "Không": "{religion}",
         "048187007211": "{cccd}",
         "28/09/2021": "{cccdIssuedDate_formatted}",
@@ -42,7 +41,6 @@ def convert_user_file(doc_path, output_path):
         "CQ09/0066": "{uni_book}",
         "29/06/2006": "{uni_date_formatted}",
         "2006": "{uni_year}",
-        "Kế toán": "{uni_major}",
         "GS.TS Lê Văn Huy": "{uni_signer}",
         "Có      ☑ Không": "Có {uni_transfer_co}      Không {uni_transfer_khong}",
         
@@ -73,9 +71,26 @@ def convert_user_file(doc_path, output_path):
                 p.runs[i].text = ""
 
         run = p.runs[0]
-        # Replace
-        # We need to be careful with Ngũ Hành Sơn and Đà Nẵng because they appear multiple times 
-        # and could be street/ward/district/city. It's better to just manually inject for address.
+        
+        # Strict word boundary for 'Kinh' and 'Kế toán'
+        if re.search(r'\bKinh\b', run.text):
+            if "Dân tộc:" in text or "Kinh" == text.strip():
+                run.text = re.sub(r'\bKinh\b', "{ethnic}", run.text)
+                
+        if re.search(r'\bKế toán\b', run.text):
+            if "Ngành:" in text:
+                run.text = re.sub(r'\bKế toán\b', "{uni_major}", run.text)
+            if "Chuyên ngành:" in text:
+                run.text = re.sub(r'\bKế toán\b', "{uni_spec}", run.text)
+                
+        # Fix the bad replacement made previously if it's already there (though we are re-processing the original)
+        # Actually, let's fix if we are modifying their edited file
+        if "{ethnic} tế phát triển" in run.text:
+            run.text = run.text.replace("{ethnic} tế phát triển", "{uni_major}")
+            
+        if "K49.KPT.NCS5" in run.text:
+            run.text = run.text.replace("K49.KPT.NCS5", "{className}")
+            
         if "Nơi sinh: Đà Nẵng" in run.text:
             run.text = run.text.replace("Đà Nẵng", "{birthPlace}")
         elif "Tên đường: Ngũ Hành Sơn" in run.text:
@@ -85,42 +100,44 @@ def convert_user_file(doc_path, output_path):
         elif "Tỉnh/Thành phố: Đà Nẵng" in run.text:
             run.text = run.text.replace("Đà Nẵng", "{perm_city}")
             
+        # Only replace 'Không' for religion
+        if "Tôn giáo: Không" in run.text:
+            run.text = run.text.replace("Tôn giáo: Không", "Tôn giáo: {religion}")
+            
         for k, v in replacements.items():
+            if k == "Không": continue # skip the global one
             if k in run.text:
                 if k == "Trường Đại học Kinh tế - Đại học Đà Nẵng" and "Cơ quan công tác" not in text and "Trường cấp bằng" not in text:
-                    continue # only replace where appropriate
-                if k == "Kế toán":
-                    if "Ngành:" in text: run.text = run.text.replace(k, "{uni_major}")
-                    if "Chuyên ngành:" in text: run.text = run.text.replace(k, "{uni_spec}")
-                else:
-                    run.text = run.text.replace(k, v)
+                    continue
+                run.text = run.text.replace(k, v)
 
     for p in doc.paragraphs:
         process_p(p)
         
     for table in doc.tables:
         if len(table.rows) > 1 and "Thời gian" in table.rows[0].cells[0].text:
-            if "Trường" in table.rows[0].cells[1].text:
+            if "trường" in table.rows[0].cells[1].text.lower() or "cơ sở" in table.rows[0].cells[1].text.lower():
                 table.rows[1].cells[0].text = "{#educationHistory}{timeRange}"
                 table.rows[1].cells[1].text = "{schoolName}"
                 table.rows[1].cells[2].text = "{major}"
                 table.rows[1].cells[3].text = "{learningType}"
                 table.rows[1].cells[4].text = "{degree}{/educationHistory}"
-            elif "Đơn vị" in table.rows[0].cells[1].text:
+                # delete other rows
+                for i in range(len(table.rows)-1, 1, -1):
+                    table._element.remove(table.rows[i]._element)
+            elif "đơn vị" in table.rows[0].cells[1].text.lower():
                 table.rows[1].cells[0].text = "{#workHistory}{timeRange}"
                 table.rows[1].cells[1].text = "{organization}"
                 table.rows[1].cells[2].text = "{position}{/workHistory}"
+                # delete other rows
+                for i in range(len(table.rows)-1, 1, -1):
+                    table._element.remove(table.rows[i]._element)
         else:
             for row in table.rows:
                 for cell in row.cells:
                     for p in cell.paragraphs:
                         process_p(p)
                         
-    # Add scientific works loop if missing
-    for p in doc.paragraphs:
-        if "VI. CÁC CÔNG TRÌNH KHOA HỌC" in p.text:
-            # We will just append the tag
-            pass # Actually they have empty dots below it. Let's replace the first dots.
     for i, p in enumerate(doc.paragraphs):
         if "VI. CÁC CÔNG TRÌNH KHOA HỌC" in p.text:
             if i + 1 < len(doc.paragraphs):
@@ -134,4 +151,4 @@ def convert_user_file(doc_path, output_path):
 
     doc.save(output_path)
     
-convert_user_file('1. Phiếu Lý lịch học viên.docx', 'public/1_Template_Mailing_new.docx')
+convert_user_file('1. Phiếu Lý lịch học viên.docx', 'public/1_Template_Mailing_v3.docx')
