@@ -339,7 +339,7 @@ export const api = {
     if (type === '3_LEVELS') {
         try {
             // First attempt to load from local static JSON generated from Excel
-            const res = await fetch('/locations.json');
+            const res = await fetch(`${import.meta.env.BASE_URL}locations.json`);
             if (res.ok) {
                 const data = await res.json();
                 setCache(cacheKey, data, CACHE_EXPIRY_LOCATIONS);

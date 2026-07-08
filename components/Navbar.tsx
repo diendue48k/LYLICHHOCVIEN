@@ -15,7 +15,7 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
       <div className="container mx-auto">
         <div className="flex justify-between items-center h-20">
           <div className="flex items-center gap-6">
-            <a href="/" className="flex items-center gap-3 group">
+            <a href={import.meta.env.BASE_URL} className="flex items-center gap-3 group">
               <div className="bg-white p-1 rounded-xl shadow-sm transition-transform group-hover:scale-105 border border-slate-100">
                 <img src={LOGO_URL} alt="DUE Logo" className="h-10 lg:h-12 w-auto" />
               </div>
